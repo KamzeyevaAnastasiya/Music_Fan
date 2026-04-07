@@ -1,5 +1,6 @@
 import type { PlaylistData } from '@/features/playlists/api/playlistsApi.types'
 import { PlaylistCover } from '@/features/playlists/ui/PlaylistsPage/PlaylistItem/PlaylistCover/PlaylistCover'
+import { PlaylistDescription } from '@/features/playlists/ui/PlaylistsPage/PlaylistItem/PlaylistDescription/PlaylistDescription'
 
 type Props = {
   playlist: PlaylistData
@@ -11,7 +12,7 @@ export const PlaylistItem = ({ playlist, editPlaylist, deletePlaylist }: Props) 
   return (
     <div>
       <PlaylistCover playlistId={playlist.id} images={playlist.attributes.images} />
-      <div>title: {playlist.attributes.title}</div>
+      <PlaylistDescription attributes={playlist.attributes} />
       <button onClick={() => editPlaylist(playlist)}>update</button>
       <button onClick={() => deletePlaylist(playlist.id)}>delete</button>
     </div>
