@@ -1,3 +1,4 @@
+import { useDebounceValue } from '@/common/hooks'
 import { useDeletePlaylistMutation, useFetchPlaylistsQuery } from '@/features/playlists/api/playlistsApi'
 import type { PlaylistData, UpdatePlaylistArgs } from '@/features/playlists/api/playlistsApi.types'
 import { CreatePlaylistForm } from '@/features/playlists/ui/PlaylistsPage/CreatePlaylistForm/CreatePlaylistForm'
@@ -13,7 +14,9 @@ export const PlaylistsPage = () => {
 
   const { register, handleSubmit, reset } = useForm<UpdatePlaylistArgs>()
 
-  const { data, isLoading } = useFetchPlaylistsQuery({ search })
+  const debounceSearch = useDebounceValue(search)
+  const { data, isLoading } = useFetchPlaylistsQuery({ search: debounceSearch })
+
   const [deletePlaylist] = useDeletePlaylistMutation()
 
   const deletePlaylistHandler = (playlistId: string) => {
