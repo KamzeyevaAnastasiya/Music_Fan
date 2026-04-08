@@ -1,3 +1,4 @@
+import { Pagination } from '@/common/components'
 import { useDebounceValue } from '@/common/hooks'
 import { useDeletePlaylistMutation, useFetchPlaylistsQuery } from '@/features/playlists/api/playlistsApi'
 import type { PlaylistData, UpdatePlaylistArgs } from '@/features/playlists/api/playlistsApi.types'
@@ -11,11 +12,17 @@ import s from './PlaylistsPage.module.css'
 export const PlaylistsPage = () => {
   const [playlistId, setPlaylistId] = useState<string | null>(null)
   const [search, setSearch] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(2)
 
   const { register, handleSubmit, reset } = useForm<UpdatePlaylistArgs>()
 
   const debounceSearch = useDebounceValue(search)
-  const { data, isLoading } = useFetchPlaylistsQuery({ search: debounceSearch })
+  const { data, isLoading } = useFetchPlaylistsQuery({
+    search: debounceSearch,
+    pageNumber: currentPage,
+    pageSize,
+  })
 
   const [deletePlaylist] = useDeletePlaylistMutation()
 
@@ -39,6 +46,11 @@ export const PlaylistsPage = () => {
     } else {
       setPlaylistId(null)
     }
+  }
+
+  const changePageSizeHandler = (size: number) => {
+    setPageSize(size)
+    setCurrentPage(1)
   }
 
   return (
@@ -75,6 +87,13 @@ export const PlaylistsPage = () => {
           )
         })}
       </div>
+      <Pagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        pagesCount={data?.meta.pagesCount || 1}
+        pageSize={pageSize}
+        changePageSize={changePageSizeHandler}
+      />
     </div>
   )
 }
