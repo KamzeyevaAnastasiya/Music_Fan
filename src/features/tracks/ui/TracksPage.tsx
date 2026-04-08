@@ -2,10 +2,16 @@ import { useFetchTracksInfiniteQuery } from '@/features/tracks/api/tracksApi'
 import s from './TracksPage.module.css'
 
 export const TracksPage = () => {
-  const { data } = useFetchTracksInfiniteQuery()
+  const { data, isLoading, hasNextPage, isFetchingNextPage, isFetching, fetchNextPage } = useFetchTracksInfiniteQuery()
 
   const pages = data?.pages.map((page) => page.data).flat() || []
   // const pages = data?.pages.flatMap((page) => page.data) || []
+
+  const loadMoreHandler = () => {
+    if (hasNextPage && !isFetching) {
+      fetchNextPage()
+    }
+  }
 
   return (
     <div>
@@ -25,6 +31,17 @@ export const TracksPage = () => {
           )
         })}
       </div>
+      {!isLoading && (
+        <>
+          {hasNextPage ? (
+            <button onClick={loadMoreHandler} disabled={isFetching}>
+              {isFetchingNextPage ? 'Loading...' : 'Load More'}
+            </button>
+          ) : (
+            <p>Nothing more to load</p>
+          )}
+        </>
+      )}
     </div>
   )
 }
