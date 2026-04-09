@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 export const baseApi = createApi({
-  reducerPath: 'playlistsApi',
+  reducerPath: 'baseApi',
   tagTypes: ['Playlist'],
   baseQuery: async (args, api, extraOptions) => {
     await new Promise((resolve) => {
