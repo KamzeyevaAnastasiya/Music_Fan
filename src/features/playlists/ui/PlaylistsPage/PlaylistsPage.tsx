@@ -13,17 +13,11 @@ export const PlaylistsPage = () => {
 
   const debounceSearch = useDebounceValue(search)
 
-  const { data, isLoading } = useFetchPlaylistsQuery(
-    {
-      search: debounceSearch,
-      pageNumber: currentPage,
-      pageSize,
-    },
-    /*{
-      pollingInterval: 3000,
-      skipPollingIfUnfocused: true,
-    },*/
-  )
+  const { data, isLoading } = useFetchPlaylistsQuery({
+    search: debounceSearch,
+    pageNumber: currentPage,
+    pageSize,
+  })
 
   const changePageSizeHandler = (size: number) => {
     setPageSize(size)
