@@ -1,6 +1,9 @@
 .container {
     border-bottom: 1px solid black;
-    padding-left: 100px;
+    padding: 0 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .list {
