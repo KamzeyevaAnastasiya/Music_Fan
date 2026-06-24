@@ -1,4 +1,5 @@
 import { baseApi } from '@/app/api/baseApi'
+import { SOCKET_EVENTS } from '@/common/constants'
 import { imagesSchema } from '@/common/schemas'
 import type { Images } from '@/common/types'
 import { withZodCatch } from '@/common/utils'
@@ -37,7 +38,7 @@ export const playlistsApi = baseApi.injectEndpoints({
           console.log('✅Connected to server')
         })
 
-        socket.on('tracks.playlist-created', (message: PlaylistCreatedEvent) => {
+        socket.on(SOCKET_EVENTS.PLAYLIST_CREATED, (message: PlaylistCreatedEvent) => {
           const newPlaylist = message.payload.data
           updateCachedData((state) => {
             state.data.pop()
