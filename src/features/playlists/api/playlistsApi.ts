@@ -1,6 +1,7 @@
 import { baseApi } from '@/app/api/baseApi'
 import { SOCKET_EVENTS } from '@/common/constants'
 import { imagesSchema } from '@/common/schemas'
+import { subscribeToEvent } from '@/common/socket'
 import type { Images } from '@/common/types'
 import { withZodCatch } from '@/common/utils'
 import type {
@@ -12,7 +13,6 @@ import type {
   UpdatePlaylistArgs,
 } from '@/features/playlists/api/playlistsApi.types'
 import { playlistCreateResponseSchema, playlistsResponseSchema } from '@/features/playlists/model/playlists.schemas'
-import { io } from 'socket.io-client'
 
 export const playlistsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -29,16 +29,7 @@ export const playlistsApi = baseApi.injectEndpoints({
       onCacheEntryAdded: async (_arg, { cacheDataLoaded, updateCachedData, cacheEntryRemoved }) => {
         await cacheDataLoaded
 
-        const socket = io(import.meta.env.VITE_SOCKET_URL, {
-          path: '/api/1.0/ws',
-          transports: ['websocket'],
-        })
-
-        socket.on('connect', () => {
-          console.log('✅Connected to server')
-        })
-
-        socket.on(SOCKET_EVENTS.PLAYLIST_CREATED, (message: PlaylistCreatedEvent) => {
+        const unsubscribe = subscribeToEvent<PlaylistCreatedEvent>(SOCKET_EVENTS.PLAYLIST_CREATED, (message) => {
           const newPlaylist = message.payload.data
           updateCachedData((state) => {
             state.data.pop()
@@ -50,9 +41,7 @@ export const playlistsApi = baseApi.injectEndpoints({
 
         await cacheEntryRemoved
 
-        socket.on('disconnect', () => {
-          console.log('❌Connected destroyed')
-        })
+        unsubscribe()
       },
       providesTags: ['Playlist'],
     }),
