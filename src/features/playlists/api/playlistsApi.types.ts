@@ -1,39 +1,17 @@
-import type { CurrentUserReaction } from '@/common/enums'
-import type { Images, Tag, User } from '@/common/types'
+import * as z from 'zod'
+import {
+  createPlaylistAttributesSchema,
+  createPlaylistSchema,
+  playlistAttributesSchema,
+  playlistDataSchema,
+  playlistMetaSchema,
+  playlistsResponseSchema,
+} from '@/features/playlists/model/playlists.schemas'
 
-export type PlaylistsResponse = {
-  data: PlaylistData[]
-  meta: PlaylistMeta
-}
-
-export type PlaylistData = {
-  id: string
-  type: 'playlists'
-  attributes: PlaylistAttributes
-}
-
-export type PlaylistMeta = {
-  page: number
-  pageSize: number
-  totalCount: number
-  pagesCount: number
-}
-
-export type PlaylistAttributes = {
-  title: string
-  addedAt: string
-  updatedAt: string
-  order: number
-  dislikesCount: number
-  likesCount: number
-  tags: Tag[]
-  images: Images
-  user: User
-  currentUserReaction: CurrentUserReaction
-  tracksCount: number
-  duration: number
-  description?: string
-}
+export type PlaylistsResponse = z.infer<typeof playlistsResponseSchema>
+export type PlaylistData = z.infer<typeof playlistDataSchema>
+export type PlaylistMeta = z.infer<typeof playlistMetaSchema>
+export type PlaylistAttributes = z.infer<typeof playlistAttributesSchema>
 
 // Arguments
 export type FetchPlaylistsArgs = {
@@ -48,19 +26,9 @@ export type FetchPlaylistsArgs = {
   onlyLikedByMe?: boolean
 }
 
-export type CreatePlaylistArgs = {
-  data: CreatePlaylistData
-}
+export type CreatePlaylistArgs = z.infer<typeof createPlaylistSchema>
 
-export type CreatePlaylistData = {
-  type: 'playlists'
-  attributes: CreatePlaylistAttributes
-}
-
-export type CreatePlaylistAttributes = {
-  title: string
-  description: string
-}
+export type CreatePlaylistAttributes = z.infer<typeof createPlaylistAttributesSchema>
 
 export type UpdatePlaylistArgs = {
   data: UpdatePlaylistData
