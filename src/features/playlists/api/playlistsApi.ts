@@ -28,7 +28,7 @@ export const playlistsApi = baseApi.injectEndpoints({
       onCacheEntryAdded: async (_arg, { cacheDataLoaded, updateCachedData, cacheEntryRemoved }) => {
         await cacheDataLoaded
 
-        const socket = io('wss://musicfun.it-incubator.app', {
+        const socket = io(import.meta.env.VITE_SOCKET_URL, {
           path: '/api/1.0/ws',
           transports: ['websocket'],
         })
