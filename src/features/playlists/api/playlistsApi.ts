@@ -1,7 +1,7 @@
 import { baseApi } from '@/app/api/baseApi'
 import { imagesSchema } from '@/common/schemas'
 import type { Images } from '@/common/types'
-import { withZodCatch } from '@/common/utils/withZodCatch'
+import { withZodCatch } from '@/common/utils'
 import type {
   CreatePlaylistArgs,
   FetchPlaylistsArgs,
