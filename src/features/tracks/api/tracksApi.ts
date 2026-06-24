@@ -1,5 +1,7 @@
 import { baseApi } from '@/app/api/baseApi'
+import { withZodCatch } from '@/common/utils'
 import type { FetchTracksResponse } from '@/features/tracks/api/tracksApi.types'
+import { fetchTracksResponseSchema } from '@/features/tracks/tracksApi/tracksApi.schemas'
 
 export const tracksApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -16,6 +18,7 @@ export const tracksApi = baseApi.injectEndpoints({
           params: { cursor: pageParam, pageSize: 5, paginationType: 'cursor' },
         }
       },
+      ...withZodCatch(fetchTracksResponseSchema),
     }),
   }),
 })

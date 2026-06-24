@@ -1,68 +1,8 @@
-import type { CurrentUserReaction } from '@/common/enums'
-import type { Images, User } from '@/common/types'
+import { fetchTracksResponseSchema, trackDataSchema } from '@/features/tracks/tracksApi/tracksApi.schemas'
+import * as z from 'zod'
 
-export type FetchTracksResponse = {
-  data: TrackData[]
-  included: TracksIncluded[]
-  meta: TracksMeta
-}
-
-export type TrackData = {
-  id: string
-  type: 'tracks'
-  attributes: TrackAttributes
-  relationships: TrackRelationships
-}
-
-export type TracksIncluded = {
-  id: string
-  type: 'artists'
-  attributes: {
-    name: string
-  }
-}
-
-export type TracksMeta = {
-  nextCursor: string | null
-  page: number
-  pageSize: number
-  totalCount: number | null
-  pagesCount: number | null
-}
-
-export type TrackAttributes = {
-  title: string
-  addedAt: string
-  likesCount: number
-  attachments: TrackAttachment[]
-  images: Images
-  currentUserReaction: CurrentUserReaction
-  user: User
-  isPublished: boolean
-  publishedAt: string
-  duration: number
-}
-
-export type TrackRelationships = {
-  artists: {
-    data: TrackRelationshipsData[]
-  }
-}
-export type TrackRelationshipsData = {
-  id: string
-  type: string
-}
-
-export type TrackAttachment = {
-  id: string
-  addedAt: string
-  updatedAt: string
-  version: number
-  url: string
-  contentType: string
-  originalName: string
-  fileSize: number
-}
+export type TrackData = z.infer<typeof trackDataSchema>
+export type FetchTracksResponse = z.infer<typeof fetchTracksResponseSchema>
 
 // Arguments
 export type FetchTracksArgs = {
