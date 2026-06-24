@@ -10,6 +10,7 @@ import type {
   PlaylistCreatedEvent,
   PlaylistData,
   PlaylistsResponse,
+  PlaylistUpdatedEvent,
   UpdatePlaylistArgs,
 } from '@/features/playlists/api/playlistsApi.types'
 import { playlistCreateResponseSchema, playlistsResponseSchema } from '@/features/playlists/model/playlists.schemas'
@@ -39,9 +40,20 @@ export const playlistsApi = baseApi.injectEndpoints({
           })
         })
 
+        const unsubscribe2 = subscribeToEvent<PlaylistUpdatedEvent>(SOCKET_EVENTS.PLAYLIST_UPDATED, (message) => {
+          const newPlaylist = message.payload.data
+          updateCachedData((state) => {
+            const index = state.data.findIndex((pl) => pl.id === newPlaylist.id)
+            if (index !== -1) {
+              state.data[index] = { ...state.data[index], ...newPlaylist }
+            }
+          })
+        })
+
         await cacheEntryRemoved
 
         unsubscribe()
+        unsubscribe2()
       },
       providesTags: ['Playlist'],
     }),
