@@ -5,11 +5,13 @@ import { withZodCatch } from '@/common/utils'
 import type {
   CreatePlaylistArgs,
   FetchPlaylistsArgs,
+  PlaylistCreatedEvent,
   PlaylistData,
   PlaylistsResponse,
   UpdatePlaylistArgs,
 } from '@/features/playlists/api/playlistsApi.types'
 import { playlistCreateResponseSchema, playlistsResponseSchema } from '@/features/playlists/model/playlists.schemas'
+import { io } from 'socket.io-client'
 
 export const playlistsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -22,6 +24,35 @@ export const playlistsApi = baseApi.injectEndpoints({
         }
       },
       ...withZodCatch(playlistsResponseSchema),
+      keepUnusedDataFor: 0,
+      onCacheEntryAdded: async (_arg, { cacheDataLoaded, updateCachedData, cacheEntryRemoved }) => {
+        await cacheDataLoaded
+
+        const socket = io('wss://musicfun.it-incubator.app', {
+          path: '/api/1.0/ws',
+          transports: ['websocket'],
+        })
+
+        socket.on('connect', () => {
+          console.log('✅Connected to server')
+        })
+
+        socket.on('tracks.playlist-created', (message: PlaylistCreatedEvent) => {
+          const newPlaylist = message.payload.data
+          updateCachedData((state) => {
+            state.data.pop()
+            state.data.unshift(newPlaylist)
+            state.meta.totalCount = state.meta.totalCount + 1
+            state.meta.pagesCount = Math.ceil(state.meta.totalCount / state.meta.pageSize)
+          })
+        })
+
+        await cacheEntryRemoved
+
+        socket.on('disconnect', () => {
+          console.log('❌Connected destroyed')
+        })
+      },
       providesTags: ['Playlist'],
     }),
     createPlaylist: build.mutation<{ data: PlaylistData }, CreatePlaylistArgs>({

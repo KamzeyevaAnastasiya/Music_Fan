@@ -42,3 +42,11 @@ export type UpdatePlaylistData = {
 export type UpdatePlaylistAttributes = CreatePlaylistAttributes & {
   tagIds: string[]
 }
+
+// WebSocket Events
+export type PlaylistCreatedEvent = {
+  type: 'tracks.playlist-created'
+  payload: {
+    data: PlaylistData
+  }
+}
