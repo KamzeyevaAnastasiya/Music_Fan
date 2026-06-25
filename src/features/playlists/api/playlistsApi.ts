@@ -79,7 +79,6 @@ export const playlistsApi = baseApi.injectEndpoints({
     }),
     updatePlaylist: build.mutation<void, { playlistId: string; body: UpdatePlaylistArgs }>({
       query: ({ playlistId, body }) => {
-        console.log('4')
         return {
           method: 'put',
           url: `playlists/${playlistId}`,
@@ -87,7 +86,6 @@ export const playlistsApi = baseApi.injectEndpoints({
         }
       },
       onQueryStarted: async ({ playlistId, body }, { queryFulfilled, dispatch, getState }) => {
-        console.log('1')
         const args = playlistsApi.util.selectCachedArgsForQuery(getState(), 'fetchPlaylists')
 
         const patchResults: { undo: () => void }[] = []
@@ -111,9 +109,7 @@ export const playlistsApi = baseApi.injectEndpoints({
         })
 
         try {
-          console.log('3')
           await queryFulfilled
-          console.log('5')
         } catch {
           patchResults.forEach((patchResult) => {
             patchResult.undo()
